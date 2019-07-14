@@ -30,7 +30,6 @@ public class PropertiesUserDao implements UserDaoInterface {
         //The file already exists
         final int ALREADY_EXISTS = 0;
 
-
         Properties properties = new Properties();
         MD5 md5 = MD5.getInstance();
         File file = new File("src/user/"+md5.getMD5(user.getUserName())+".properties");
@@ -89,16 +88,15 @@ public class PropertiesUserDao implements UserDaoInterface {
 
         Properties properties = new Properties();
         MD5 md5 = MD5.getInstance();
+        UserBean user = this.queryUser(userName);
         File file = new File("src/user/"+md5.getMD5(userName)+".properties");
         try{
             FileOutputStream fileOutputStream = new FileOutputStream(file);
 
-            UserBean user = this.queryUser(userName);
-            //if(user != null)
-            properties.setProperty("userName",md5.getMD5(user.getUserName()));
-            properties.setProperty("password",md5.getMD5(user.getPassword()));
+            properties.setProperty("userName",user.getUserName());
+            properties.setProperty("password",user.getPassword());
             properties.setProperty("money",String.valueOf(moneyBean.getMoney()));
-            properties.store(fileOutputStream,"user:"+user.getUserName()+"'s account");
+            properties.store(fileOutputStream,"user:"+userName+"'s account");
             fileOutputStream.close();
         }
         catch (FileNotFoundException e){

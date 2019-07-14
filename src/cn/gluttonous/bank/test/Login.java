@@ -63,6 +63,7 @@ public class Login extends LoginView {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new Welcome();
+
                 dispose();
             }
         });

@@ -6,6 +6,7 @@ import cn.gluttonous.bank.model.MoneyBean;
 import cn.gluttonous.bank.model.UserBean;
 import cn.gluttonous.bank.util.AccountOverDrawnException;
 import cn.gluttonous.bank.util.InvalidDepositException;
+import cn.gluttonous.bank.util.UserNotExistException;
 import cn.gluttonous.bank.view.HomeView;
 
 import javax.swing.*;
@@ -75,6 +76,9 @@ public class Home extends HomeView {
                         manager.transfer(name,new MoneyBean(money));
                         JOptionPane.showMessageDialog(null, "余额："+manager.inquiry().getMoney(),"显示余额",JOptionPane.INFORMATION_MESSAGE);
                     }
+                }
+                catch (UserNotExistException ue){
+                    JOptionPane.showMessageDialog(null, "用户不存在！","错误",JOptionPane.ERROR_MESSAGE);
                 }
                 catch (InvalidDepositException ie){
                     JOptionPane.showMessageDialog(null, "存款金额不能为负！","输入金额错误",JOptionPane.ERROR_MESSAGE);

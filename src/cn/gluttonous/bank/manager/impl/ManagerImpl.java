@@ -8,6 +8,7 @@ import cn.gluttonous.bank.model.UserBean;
 import cn.gluttonous.bank.util.AccountOverDrawnException;
 import cn.gluttonous.bank.util.InvalidDepositException;
 import cn.gluttonous.bank.util.MD5;
+import cn.gluttonous.bank.util.UserNotExistException;
 
 import java.io.*;
 import java.util.Properties;
@@ -29,6 +30,7 @@ public class ManagerImpl implements Manager {
         if (manager == null){
             manager = new ManagerImpl(userBean);
         }
+
         return manager;
     }
 
@@ -90,16 +92,20 @@ public class ManagerImpl implements Manager {
      * 功能：转账
      */
     @Override
-    public void transfer(String name, MoneyBean moneyBean) {
+    public void transfer(String name, MoneyBean moneyBean)throws InvalidDepositException,UserNotExistException {
 
         UserDaoInterface dao = UserDaoFactory.getInstance().getDao();
         UserBean user = dao.queryUser(name);
+        if(user == null){
+            throw new UserNotExistException();
+        }
         user.setMoney(new MoneyBean(moneyBean.getMoney()+user.getMoneyBean().getMoney()));
-
         //？ 这里传的是密文  ，但要接受明文
         dao.updateMoney(name,user.getMoneyBean());
+        if(userBean.getMoneyBean().getMoney() - user.getMoneyBean().getMoney() < 0){
+            throw new AccountOverDrawnException();
+        }
         userBean.setMoney(new MoneyBean(userBean.getMoneyBean().getMoney() - user.getMoneyBean().getMoney()));
-
     }
 
     /**
@@ -126,7 +132,7 @@ public class ManagerImpl implements Manager {
 
         MD5 md5 = MD5.getInstance();
         if(user.getUserName().equals(md5.getMD5(userName)) && user.getPassword().equals(md5.getMD5(password))){
-            this.userBean = userBean;
+            this.userBean.setMoney(user.getMoneyBean());
             return true;
         }
         else {

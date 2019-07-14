@@ -4,6 +4,7 @@ import cn.gluttonous.bank.model.MoneyBean;
 import cn.gluttonous.bank.model.UserBean;
 import cn.gluttonous.bank.util.AccountOverDrawnException;
 import cn.gluttonous.bank.util.InvalidDepositException;
+import cn.gluttonous.bank.util.UserNotExistException;
 
 /**
  * @title: bank
@@ -44,7 +45,7 @@ public interface Manager {
      * @param name 转向用户名
      * @param moneyBean
      */
-    public void transfer(String name, MoneyBean moneyBean);
+    public void transfer(String name, MoneyBean moneyBean)throws InvalidDepositException, UserNotExistException;
 
     /**
      * 注册
