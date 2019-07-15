@@ -53,7 +53,7 @@ public interface Manager {
      *         FAILURE = -1
      *        ALREADY_EXISTS = 0   //The file already exists
      */
-    public int register();
+    public int register(UserBean user);
 
     /**
      * 登录

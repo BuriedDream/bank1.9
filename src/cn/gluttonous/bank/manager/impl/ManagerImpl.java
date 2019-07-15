@@ -112,9 +112,9 @@ public class ManagerImpl implements Manager {
      * 功能：注册
      */
     @Override
-    public int register() {
+    public int register(UserBean user) {
         UserDaoInterface userDao = UserDaoFactory.getInstance().getDao();
-        return userDao.create(userBean);
+        return userDao.create(user);
     }
 
     /**

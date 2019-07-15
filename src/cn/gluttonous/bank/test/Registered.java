@@ -35,7 +35,7 @@ public class Registered extends RegisteredView {
                         String userName = userText.getText();
                         String password = new String(passwordText.getPassword());
 
-                        int flag = ManagerImpl.getInstance(new UserBean(userName, password)).register();
+                        int flag = ManagerImpl.getInstance(new UserBean(userName, password)).register(new UserBean(userName, password));
 
                         if (flag == 0) {
                             JOptionPane.showMessageDialog(null, "用户已存在!", "提示消息", JOptionPane.WARNING_MESSAGE);
@@ -63,7 +63,9 @@ public class Registered extends RegisteredView {
         cancelButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.exit(0);
+//                System.exit(0);
+                new Welcome();
+                dispose();
             }
         });
 

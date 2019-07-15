@@ -31,7 +31,7 @@ public class Login extends LoginView {
                 String userName = userText.getText();
                 String password = new String(passwordText.getPassword());
 //checkValidCode()
-                if(true){
+                if(checkValidCode()){
 
                     if(checkUserNameAndPassword()){
 
@@ -63,7 +63,6 @@ public class Login extends LoginView {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new Welcome();
-
                 dispose();
             }
         });
