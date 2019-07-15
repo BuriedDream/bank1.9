@@ -1,5 +1,6 @@
 package cn.gluttonous.bank.model;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Objects;
 
@@ -14,7 +15,8 @@ public class LogBean {
     private String userName;
     private String log;
     private MoneyBean moneyBean;
-    private Date date;
+    private Timestamp date;
+    private MoneyBean afterMoney;
 
     public LogBean() {
     }
@@ -43,22 +45,20 @@ public class LogBean {
         this.moneyBean = moneyBean;
     }
 
-    public Date getDate() {
+    public Timestamp getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(Timestamp date) {
         this.date = date;
     }
 
-    @Override
-    public String toString() {
-        return "LogBean{" +
-                "userName='" + userName + '\'' +
-                ", log='" + log + '\'' +
-                ", moneyBean=" + moneyBean +
-                ", date=" + date +
-                '}';
+    public MoneyBean getAfterMoney() {
+        return afterMoney;
+    }
+
+    public void setAfterMoney(MoneyBean afterMoney) {
+        this.afterMoney = afterMoney;
     }
 
     @Override
@@ -73,11 +73,23 @@ public class LogBean {
         return Objects.equals(userName, logBean.userName) &&
                 Objects.equals(log, logBean.log) &&
                 Objects.equals(moneyBean, logBean.moneyBean) &&
-                Objects.equals(date, logBean.date);
+                Objects.equals(date, logBean.date) &&
+                Objects.equals(afterMoney, logBean.afterMoney);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userName, log, moneyBean, date);
+        return Objects.hash(userName, log, moneyBean, date, afterMoney);
+    }
+
+    @Override
+    public String toString() {
+        return "LogBean{" +
+                "userName='" + userName + '\'' +
+                ", log='" + log + '\'' +
+                ", moneyBean=" + moneyBean +
+                ", date=" + date +
+                ", afterMoney=" + afterMoney +
+                '}';
     }
 }

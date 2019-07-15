@@ -1,8 +1,10 @@
 package cn.gluttonous.bank.dao;
 
+import cn.gluttonous.bank.model.LogBean;
 import cn.gluttonous.bank.model.MoneyBean;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @title: bank1.9
@@ -12,6 +14,17 @@ import java.util.Date;
  * @Version: 1.0
  **/
 public interface LogDaoInterFace {
-    public void insert(String userName, MoneyBean moneyBean, String log, Date date);
+    /**
+     * 插入一条log
+     * @param logBean
+     */
+    public void insert(LogBean logBean);
+
+    /**
+     * 依据 userName 查询log
+     * @param userName
+     * @return
+     */
+    public List<LogBean> query(String userName);
 
 }

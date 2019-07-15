@@ -71,7 +71,7 @@ public class Home extends HomeView {
                 //System.out.println("转账");
                 try {
                     String name = JOptionPane.showInputDialog("请输入转账用户名：");
-                    double money =Double.parseDouble(JOptionPane.showInputDialog("请输入转账金额："));
+                    double money = Double.parseDouble(JOptionPane.showInputDialog("请输入转账金额："));
                     if(JOptionPane.showConfirmDialog(null,"确定转 "+money+" 给"+name+"吗？") == 0){
                         manager.transfer(name,new MoneyBean(money));
                         JOptionPane.showMessageDialog(null, "余额："+manager.inquiry().getMoney(),"显示余额",JOptionPane.INFORMATION_MESSAGE);

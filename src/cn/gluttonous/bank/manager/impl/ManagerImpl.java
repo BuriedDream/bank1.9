@@ -1,16 +1,17 @@
 package cn.gluttonous.bank.manager.impl;
 
+import cn.gluttonous.bank.dao.LogDaoInterFace;
 import cn.gluttonous.bank.dao.UserDaoInterface;
+import cn.gluttonous.bank.dao.impl.LogDao;
 import cn.gluttonous.bank.factory.UserDaoFactory;
 import cn.gluttonous.bank.manager.Manager;
+import cn.gluttonous.bank.model.LogBean;
 import cn.gluttonous.bank.model.MoneyBean;
 import cn.gluttonous.bank.model.UserBean;
-import cn.gluttonous.bank.util.AccountOverDrawnException;
-import cn.gluttonous.bank.util.InvalidDepositException;
-import cn.gluttonous.bank.util.MD5;
-import cn.gluttonous.bank.util.UserNotExistException;
+import cn.gluttonous.bank.util.*;
 
 import java.io.*;
+import java.util.Date;
 import java.util.Properties;
 
 
@@ -52,6 +53,14 @@ public class ManagerImpl implements Manager {
         }
         else {
             userBean.getMoneyBean().setMoney(userBean.getMoneyBean().getMoney() + money);
+            LogBean logBean = new LogBean();
+            logBean.setDate(DateUtil.getTimestamp());
+            logBean.setLog("存款");
+            logBean.setMoneyBean(new MoneyBean(money));
+            logBean.setAfterMoney(new MoneyBean(userBean.getMoneyBean().getMoney() + money));
+            logBean.setUserName(userBean.getUserName());
+            LogDaoInterFace logDaoInterFace = new LogDao();
+            logDaoInterFace.insert(logBean);
         }
     }
 
@@ -68,6 +77,14 @@ public class ManagerImpl implements Manager {
         }
         else {
             userBean.getMoneyBean().setMoney(userBean.getMoneyBean().getMoney()-money);
+            LogBean logBean = new LogBean();
+            logBean.setDate(DateUtil.getTimestamp());
+            logBean.setLog("取款");
+            logBean.setMoneyBean(new MoneyBean(money));
+            logBean.setAfterMoney(new MoneyBean(userBean.getMoneyBean().getMoney() + money));
+            logBean.setUserName(userBean.getUserName());
+            LogDaoInterFace logDaoInterFace = new LogDao();
+            logDaoInterFace.insert(logBean);
         }
     }
 
@@ -92,20 +109,31 @@ public class ManagerImpl implements Manager {
      * 功能：转账
      */
     @Override
-    public void transfer(String name, MoneyBean moneyBean)throws InvalidDepositException,UserNotExistException {
+    public void transfer(String name, MoneyBean moneyBean)throws AccountOverDrawnException,UserNotExistException {
 
         UserDaoInterface dao = UserDaoFactory.getInstance().getDao();
         UserBean user = dao.queryUser(name);
         if(user == null){
             throw new UserNotExistException();
         }
-        user.setMoney(new MoneyBean(moneyBean.getMoney()+user.getMoneyBean().getMoney()));
         //？ 这里传的是密文  ，但要接受明文
-        dao.updateMoney(name,user.getMoneyBean());
-        if(userBean.getMoneyBean().getMoney() - user.getMoneyBean().getMoney() < 0){
+
+        if(userBean.getMoneyBean().getMoney() - moneyBean.getMoney() < 0){
             throw new AccountOverDrawnException();
         }
-        userBean.setMoney(new MoneyBean(userBean.getMoneyBean().getMoney() - user.getMoneyBean().getMoney()));
+        user.setMoney(new MoneyBean(moneyBean.getMoney()+user.getMoneyBean().getMoney()));
+        dao.updateMoney(name,user.getMoneyBean());
+        userBean.setMoney(new MoneyBean(userBean.getMoneyBean().getMoney() - moneyBean.getMoney()));
+
+        LogBean logBean = new LogBean();
+        logBean.setDate(DateUtil.getTimestamp());
+        logBean.setLog("转账");
+        logBean.setMoneyBean(moneyBean);
+        logBean.setAfterMoney(new MoneyBean(userBean.getMoneyBean().getMoney() - moneyBean.getMoney()));
+        logBean.setUserName(userBean.getUserName());
+        LogDaoInterFace logDaoInterFace = new LogDao();
+        logDaoInterFace.insert(logBean);
+
     }
 
     /**
