@@ -39,11 +39,6 @@ public class LogDao implements LogDaoInterFace {
         connection = JdbcUtil.getConnection();
 
         try {
-             /*
-             long longTime = date.getTime();
-		     Timestamp timestamp = new Timestamp(longTime);
-		     System.out.println(timestamp); // 2017-09-24 23:33:20.655
-             */
 
             String sql_insert = "INSERT INTO userlog(username,money,LOG,logDate,afterMoney) VALUES (?,?,?,?,?)";
             preparedStatement = connection.prepareStatement(sql_insert);
