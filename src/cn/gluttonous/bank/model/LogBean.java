@@ -14,9 +14,9 @@ import java.util.Objects;
 public class LogBean {
     private String userName;
     private String log;
-    private MoneyBean moneyBean;
-    private Timestamp date;
-    private MoneyBean afterMoney;
+    private double money;
+    private Timestamp logDate;
+    private double afterMoney;
 
     public LogBean() {
     }
@@ -37,59 +37,27 @@ public class LogBean {
         this.log = log;
     }
 
-    public MoneyBean getMoneyBean() {
-        return moneyBean;
+    public double getMoney() {
+        return money;
     }
 
-    public void setMoneyBean(MoneyBean moneyBean) {
-        this.moneyBean = moneyBean;
+    public void setMoney(double money) {
+        this.money = money;
     }
 
-    public Timestamp getDate() {
-        return date;
+    public Timestamp getLogDate() {
+        return logDate;
     }
 
-    public void setDate(Timestamp date) {
-        this.date = date;
+    public void setLogDate(Timestamp logDate) {
+        this.logDate = logDate;
     }
 
-    public MoneyBean getAfterMoney() {
+    public double getAfterMoney() {
         return afterMoney;
     }
 
-    public void setAfterMoney(MoneyBean afterMoney) {
+    public void setAfterMoney(double afterMoney) {
         this.afterMoney = afterMoney;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o){
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()){
-            return false;
-        }
-        LogBean logBean = (LogBean) o;
-        return Objects.equals(userName, logBean.userName) &&
-                Objects.equals(log, logBean.log) &&
-                Objects.equals(moneyBean, logBean.moneyBean) &&
-                Objects.equals(date, logBean.date) &&
-                Objects.equals(afterMoney, logBean.afterMoney);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(userName, log, moneyBean, date, afterMoney);
-    }
-
-    @Override
-    public String toString() {
-        return "LogBean{" +
-                "userName='" + userName + '\'' +
-                ", log='" + log + '\'' +
-                ", moneyBean=" + moneyBean +
-                ", date=" + date +
-                ", afterMoney=" + afterMoney +
-                '}';
     }
 }

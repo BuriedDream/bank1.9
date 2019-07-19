@@ -1,10 +1,15 @@
 package cn.gluttonous.bank.dao.impl;
 
 import cn.gluttonous.bank.dao.LogDaoInterFace;
+import cn.gluttonous.bank.dao.tool.LogPageBean;
 import cn.gluttonous.bank.model.LogBean;
 import cn.gluttonous.bank.model.MoneyBean;
 import cn.gluttonous.bank.util.JdbcUtil;
+import cn.gluttonous.bank.util.Jdbc_c3p0_util;
 import cn.gluttonous.bank.util.MD5;
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.BeanListHandler;
+import org.apache.commons.dbutils.handlers.ScalarHandler;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -36,70 +41,74 @@ public class LogDao implements LogDaoInterFace {
     public void insert(LogBean logBean) {
         MD5 md5 = MD5.getInstance();
 
-        connection = JdbcUtil.getConnection();
-
         try {
+            String sql_insert = "INSERT INTO userlog(userName,money,LOG,logDate,afterMoney) VALUES (?,?,?,?,?)";
 
-            String sql_insert = "INSERT INTO userlog(username,money,LOG,logDate,afterMoney) VALUES (?,?,?,?,?)";
-            preparedStatement = connection.prepareStatement(sql_insert);
-            preparedStatement.setString(1,md5.getMD5(logBean.getUserName()));
-            preparedStatement.setDouble(2,logBean.getMoneyBean().getMoney());
-            preparedStatement.setString(3,logBean.getLog());
-            preparedStatement.setString(4,logBean.getDate().toString());
-            preparedStatement.setDouble(5,logBean.getAfterMoney().getMoney());
-            preparedStatement.executeUpdate();
-
+            QueryRunner queryRunner = Jdbc_c3p0_util.getQueryRuner();
+            queryRunner.update(sql_insert,md5.getMD5(logBean.getUserName()), logBean.getMoney(),logBean.getLog(),logBean.getLogDate(),logBean.getAfterMoney());
         }
         catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        finally {
-            JdbcUtil.closeAll(connection,preparedStatement,resultSet);
-        }
-
     }
 
     /**
      * 依据 userName 查询log
      *
-     * @param userName
+     * @param logPageBean
      * @return
      */
     @Override
-    public List<LogBean> query(String userName) {
+    public void query(LogPageBean<LogBean> logPageBean, String userName) {
 
-        MD5 md5 = MD5.getInstance();
+        //总记录数
+        logPageBean.setTotalCount(this.getTotalCount(userName));
 
-        connection = JdbcUtil.getConnection();
+        //设置当前页
+        if(logPageBean.getCurrentPage() <= 0){
+            logPageBean.setCurrentPage(1);
+        }else if(logPageBean.getCurrentPage() > logPageBean.getTotalCount()){
+            logPageBean.setCurrentPage(logPageBean.getTotalPage());
+        }
+
+        //获取当前页： 计算查询的起始行、返回的行数
+        int currentPage = logPageBean.getCurrentPage();
+        // 查询的起始行
+        int index = (currentPage -1 ) * logPageBean.getPageCount();
+        // 查询返回的行数
+        int count = logPageBean.getPageCount();
+
 
         try {
-             /*
-             long longTime = date.getTime();
-		     Timestamp timestamp = new Timestamp(longTime);
-		     System.out.println(timestamp); // 2017-09-24 23:33:20.655
-             */
+            String sql_select = "SELECT * FROM usertable WHERE userName = ? LiMIT ?,?";
+            MD5 md5 = MD5.getInstance();
+            QueryRunner queryRunner = Jdbc_c3p0_util.getQueryRuner();
+            List<LogBean> logBeans = queryRunner.query(sql_select,new BeanListHandler<LogBean>(LogBean.class),md5.getMD5(userName),index,count);
 
-            String sql_select = "SELECT * FROM usertable WHERE userName = ?";
-            preparedStatement = connection.prepareStatement(sql_select);
-            preparedStatement.setString(1,md5.getMD5(userName));
-            resultSet = preparedStatement.executeQuery();
-            List<LogBean> logBeans = new ArrayList<>();
-            while (resultSet.next()){
-                LogBean logBean = new LogBean();
-                logBean.setUserName(resultSet.getString("userName"));
-                logBean.setMoneyBean(new MoneyBean(resultSet.getDouble("money")));
-                logBean.setLog(resultSet.getString("log"));
-                logBean.setAfterMoney(new MoneyBean(resultSet.getDouble("afterMoney")));
-                logBean.setDate(resultSet.getTimestamp("logDate"));
-                logBeans.add(logBean);
-            }
-            return logBeans;
+            logPageBean.setPageData(logBeans);
         }
         catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        finally {
-            JdbcUtil.closeAll(connection,preparedStatement,resultSet);
+    }
+
+
+    /**
+     * 返回总记录数
+     * @param UserName
+     * @return
+     */
+    @Override
+    public int getTotalCount(String UserName) {
+        String sql = "SELECT COUNT(*) FROM userlog WHERE username=?";
+        MD5 md5 = MD5.getInstance();
+        try {
+            QueryRunner queryRunner = Jdbc_c3p0_util.getQueryRuner();
+            Integer count = queryRunner.query(sql,new ScalarHandler<Integer>(),md5.getMD5(UserName));
+            return count;
+        }
+        catch (SQLException e){
+            throw new RuntimeException(e);
         }
     }
 }

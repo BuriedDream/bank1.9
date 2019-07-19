@@ -178,5 +178,15 @@ public class PropertiesUserDao implements UserDaoInterface {
         return moneyBean;
     }
 
+    /**
+     * 查询用户的状态
+     * @param name
+     * @return
+     */
+    @Override
+    public Boolean queryFlag(String name){
+        return false;
+    }
+
 
 }

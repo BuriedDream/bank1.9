@@ -54,10 +54,10 @@ public class ManagerImpl implements Manager {
         else {
             userBean.getMoneyBean().setMoney(userBean.getMoneyBean().getMoney() + money);
             LogBean logBean = new LogBean();
-            logBean.setDate(DateUtil.getTimestamp());
+            logBean.setLogDate(DateUtil.getTimestamp());
             logBean.setLog("存款");
-            logBean.setMoneyBean(new MoneyBean(money));
-            logBean.setAfterMoney(new MoneyBean(userBean.getMoneyBean().getMoney() + money));
+            logBean.setMoney(money);
+            logBean.setAfterMoney(userBean.getMoneyBean().getMoney() + money);
             logBean.setUserName(userBean.getUserName());
             LogDaoInterFace logDaoInterFace = new LogDao();
             logDaoInterFace.insert(logBean);
@@ -78,10 +78,10 @@ public class ManagerImpl implements Manager {
         else {
             userBean.getMoneyBean().setMoney(userBean.getMoneyBean().getMoney()-money);
             LogBean logBean = new LogBean();
-            logBean.setDate(DateUtil.getTimestamp());
+            logBean.setLogDate(DateUtil.getTimestamp());
             logBean.setLog("取款");
-            logBean.setMoneyBean(new MoneyBean(money));
-            logBean.setAfterMoney(new MoneyBean(userBean.getMoneyBean().getMoney() + money));
+            logBean.setMoney(money);
+            logBean.setAfterMoney(userBean.getMoneyBean().getMoney() + money);
             logBean.setUserName(userBean.getUserName());
             LogDaoInterFace logDaoInterFace = new LogDao();
             logDaoInterFace.insert(logBean);
@@ -126,12 +126,21 @@ public class ManagerImpl implements Manager {
         userBean.setMoney(new MoneyBean(userBean.getMoneyBean().getMoney() - moneyBean.getMoney()));
 
         LogBean logBean = new LogBean();
-        logBean.setDate(DateUtil.getTimestamp());
-        logBean.setLog("转账");
-        logBean.setMoneyBean(moneyBean);
-        logBean.setAfterMoney(new MoneyBean(userBean.getMoneyBean().getMoney() - moneyBean.getMoney()));
+        //转出
+        logBean.setLogDate(DateUtil.getTimestamp());
+        logBean.setLog("转出");
+        logBean.setMoney(moneyBean.getMoney());
+        logBean.setAfterMoney(userBean.getMoneyBean().getMoney() - moneyBean.getMoney());
         logBean.setUserName(userBean.getUserName());
         LogDaoInterFace logDaoInterFace = new LogDao();
+        logDaoInterFace.insert(logBean);
+
+        //转入
+        logBean.setLogDate(DateUtil.getTimestamp());
+        logBean.setLog("转入");
+        logBean.setMoney(moneyBean.getMoney());
+        logBean.setAfterMoney(dao.queryMoney(name).getMoney() + moneyBean.getMoney());
+        logBean.setUserName(name);
         logDaoInterFace.insert(logBean);
 
     }

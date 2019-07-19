@@ -48,5 +48,12 @@ public interface UserDaoInterface {
      * @return MoneyBean
      */
     public MoneyBean queryMoney(String userName);
+
+    /**
+     * 查询用户的状态
+     * @param userName
+     * @return
+     */
+    public Boolean queryFlag(String userName);
 }
 

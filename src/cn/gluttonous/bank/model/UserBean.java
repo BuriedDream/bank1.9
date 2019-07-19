@@ -14,6 +14,16 @@ public class UserBean {
     private String userName;
     private String password;
     private MoneyBean moneyBean;
+    private double money;
+
+    public double getMoney() {
+        return money;
+    }
+
+    public void setMoney(double money) {
+        this.money = money;
+        this.setMoney(new MoneyBean(money));
+    }
 
     public UserBean(String userName, String password, MoneyBean money) {
         this.userName = userName;

@@ -1,6 +1,9 @@
 package cn.gluttonous.bank.test;
 
 
+import cn.gluttonous.bank.dao.UserDaoInterface;
+import cn.gluttonous.bank.dao.impl.MysqlUserDao;
+
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -14,13 +17,7 @@ import java.util.Date;
  **/
 public class Teat {
     public static void main(String[] args) {
-
-        //获得系统时间.
-        Date date = new Date();
-        //将时间格式转换成符合Timestamp要求的格式
-        String nowTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
-         //把时间转换
-        Timestamp goodsC_date =Timestamp.valueOf(nowTime);
-        System.out.println(goodsC_date);
+        UserDaoInterface daoInterface = new MysqlUserDao();
+        System.out.println(daoInterface.queryFlag("liam"));
     }
 }

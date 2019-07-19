@@ -1,5 +1,6 @@
 package cn.gluttonous.bank.dao;
 
+import cn.gluttonous.bank.dao.tool.LogPageBean;
 import cn.gluttonous.bank.model.LogBean;
 import cn.gluttonous.bank.model.MoneyBean;
 
@@ -22,9 +23,15 @@ public interface LogDaoInterFace {
 
     /**
      * 依据 userName 查询log
-     * @param userName
+     * @param logPageBean
      * @return
      */
-    public List<LogBean> query(String userName);
+    public void query(LogPageBean<LogBean> logPageBean, String userName);
 
+    /**
+     * 返回总记录数
+     * @param UserName
+     * @return
+     */
+    public int getTotalCount(String UserName);
 }

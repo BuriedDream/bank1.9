@@ -5,6 +5,7 @@ import cn.gluttonous.bank.model.MoneyBean;
 import cn.gluttonous.bank.model.UserBean;
 import cn.gluttonous.bank.util.JdbcUtil;
 import cn.gluttonous.bank.util.MD5;
+import org.junit.Test;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -182,5 +183,37 @@ public class MysqlUserDao implements UserDaoInterface {
         }
 
         return null;
+    }
+
+    /**
+     * 查询用户的状态
+     * @param userName
+     * @return
+     */
+    @Override
+    public Boolean queryFlag(String userName){
+        MD5 md5 = MD5.getInstance();
+        connection = JdbcUtil.getConnection();
+
+        Boolean flag = false;
+        try {
+            String sql_select = "SELECT * FROM usertable WHERE userName = ?";
+            preparedStatement = connection.prepareStatement(sql_select);
+            preparedStatement.setString(1,md5.getMD5(userName));
+            resultSet =preparedStatement.executeQuery();
+
+            if(resultSet.next()){
+                flag = resultSet.getBoolean("state");
+            }
+
+        }
+        catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        finally {
+            JdbcUtil.closeAll(connection,preparedStatement,resultSet);
+        }
+
+        return flag;
     }
 }
